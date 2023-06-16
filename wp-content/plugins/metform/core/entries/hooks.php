@@ -35,7 +35,7 @@ class Hooks
 
         // Show PDF export column when pro plugin is activated
         if(in_array('metform-pro/metform-pro.php', apply_filters('active_plugins', get_option('active_plugins')))):
-            $columns['export_actions'] = esc_html('Export Actions', 'metform');
+            $columns['export_actions'] = esc_html__('Export Actions', 'metform');
         endif;
 
         
@@ -58,7 +58,7 @@ class Hooks
 
                 global $wp;
                 $current_url = add_query_arg($wp->query_string . "&mf_form_id=" . $form_id, '', home_url($wp->request));
-                $current_url.='&mf-entry-flter-form-nonce='.wp_create_nonce('mf-entry-flter-form-action');
+             
                 echo "<a data-metform-form-id=" . esc_attr($form_id) . " class='mf-entry-filter mf-entry-flter-form_id' href=" . esc_url($current_url) . ">" . esc_html($post_title) . "</a>";
                 break;
 
@@ -67,7 +67,7 @@ class Hooks
 
                 global $wp;
                 $current_url = add_query_arg($wp->query_string . "&mf_ref_id=" . $page_id, '', home_url($wp->request));
-                $current_url.='&mf-entry-flter-ref-nonce='.wp_create_nonce('mf-entry-flter-ref-action');
+
 				echo "<a class='mf-entry-filter mf-entry-flter-form_id' href='" . esc_url($current_url) . "'>".esc_html(get_the_title($page_id))."</a>";
                 break;
             
@@ -93,18 +93,16 @@ class Hooks
         global $pagenow;
         //phpcs:ignore WordPress.Security.NonceVerification -- Ignore because of This is CPT page
         $current_page = isset($_GET['post_type']) ? sanitize_key($_GET['post_type']) : '';
-
         if (
             is_admin()
             && 'metform-entry' == $current_page
             && 'edit.php' == $pagenow
             && $query->query_vars['post_type'] == 'metform-entry'
-            && isset($_GET['mf_form_id'])
-            && $_GET['mf_form_id'] != 'all'
-            && isset($_GET['mf-entry-flter-form-nonce'])
-            && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['mf-entry-flter-form-nonce'])),'mf-entry-flter-form-action')
+            && isset($_GET['mf_form_id']) //phpcs:ignore WordPress.Security.NonceVerification
+            && $_GET['mf_form_id'] != 'all' //phpcs:ignore WordPress.Security.NonceVerification
         ) {
-            $form_id = sanitize_key($_GET['mf_form_id']);
+
+            $form_id = sanitize_key($_GET['mf_form_id']); //phpcs:ignore WordPress.Security.NonceVerification
             $query->query_vars['meta_key'] = 'metform_entries__form_id';
             $query->query_vars['meta_value'] = $form_id;
             $query->query_vars['meta_compare'] = '=';
@@ -115,12 +113,11 @@ class Hooks
             && 'metform-entry' == $current_page
             && 'edit.php' == $pagenow
             && $query->query_vars['post_type'] == 'metform-entry'
-            && isset($_GET['mf_ref_id'])
-            && $_GET['mf_ref_id'] != 'all'
-            && isset($_GET['mf-entry-flter-ref-nonce'])
-            && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['mf-entry-flter-ref-nonce'])),'mf-entry-flter-ref-action')
+            && isset($_GET['mf_ref_id']) //phpcs:ignore WordPress.Security.NonceVerification
+            && $_GET['mf_ref_id'] != 'all' //phpcs:ignore WordPress.Security.NonceVerification
         ) {
-            $page_id = sanitize_key($_GET['mf_ref_id']);
+
+            $page_id = sanitize_key($_GET['mf_ref_id']); //phpcs:ignore WordPress.Security.NonceVerification
             $query->query_vars['meta_key'] = 'mf_page_id';
             $query->query_vars['meta_value'] = $page_id;
             $query->query_vars['meta_compare'] = '=';

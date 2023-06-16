@@ -36,7 +36,9 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 	 */
 	public function register_configuration( $configurations, $wp_customize ) {
 
-		$cloned_component_track = Astra_Builder_Helper::$component_count_array;
+		$cloned_component_track         = Astra_Builder_Helper::$component_count_array;
+		$widget_config                  = array();
+		$astra_has_widgets_block_editor = astra_has_widgets_block_editor();
 
 		for ( $index = 1; $index <= Astra_Builder_Helper::$num_of_header_button; $index++ ) {
 
@@ -97,8 +99,21 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'builder' => 'header',
 			);
 
+			if ( $astra_has_widgets_block_editor ) {
+				$widget_config[] = array(
+					'name'     => $header_widget_section,
+					'type'     => 'section',
+					'priority' => 5,
+					'panel'    => 'panel-header-builder-group',
+				);
+			}
+
 			Astra_Builder_Helper::$header_desktop_items[ 'widget-' . $index ] = $item;
 			Astra_Builder_Helper::$header_mobile_items[ 'widget-' . $index ]  = $item;
+		}
+
+		if ( $astra_has_widgets_block_editor ) {
+			$configurations = array_merge( $configurations, $widget_config );
 		}
 
 		for ( $index = 1; $index <= Astra_Builder_Helper::$num_of_header_menu; $index++ ) {
@@ -210,6 +225,8 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'control'     => 'ast-builder-header-control',
 				'priority'    => 40,
 				'description' => '',
+				'context'     => array(),
+				'divider'     => ( astra_showcase_upgrade_notices() ) ? array() : array( 'ast_class' => 'ast-pro-available' ),
 			),
 
 			/**
@@ -296,6 +313,7 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 						'value'   => 'general',
 					),
 				),
+				'divider'     => array( 'ast_class' => 'ast-section-spacing' ),
 			),
 
 			/**
@@ -410,6 +428,7 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'priority' => 44,
 				'settings' => array(),
 				'context'  => Astra_Builder_Helper::$general_tab,
+				'divider'  => array( 'ast_class' => 'ast-section-spacing' ),
 			),
 
 			/**
@@ -427,6 +446,7 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'priority'    => 45,
 				'context'     => Astra_Builder_Helper::$general_tab,
 				'settings'    => false,
+				'divider'     => array( 'ast_class' => 'ast-section-spacing' ),
 			),
 
 			// Option: Header Width.
@@ -455,7 +475,7 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'transport'  => 'postMessage',
 				'renderAs'   => 'text',
 				'responsive' => false,
-				'divider'    => array( 'ast_class' => 'ast-bottom-divider' ),
+				'divider'    => array( 'ast_class' => 'ast-section-spacing ast-bottom-section-divider' ),
 			),
 
 			array(
@@ -479,6 +499,48 @@ class Astra_Customizer_Header_Builder_Configs extends Astra_Customizer_Config_Ba
 				'context'           => Astra_Builder_Helper::$design_tab,
 			),
 		);
+
+		// Learn More link if Astra Pro is not activated.
+		if ( astra_showcase_upgrade_notices() ) {
+			/**
+			 * Option: Pro options
+			 */
+			$_configs[] = array(
+				'name'     => ASTRA_THEME_SETTINGS . '[header-builder-pro-items]',
+				'type'     => 'control',
+				'control'  => 'ast-upgrade',
+				'renderAs' => 'list',
+				'choices'  => array(
+					'one'   => array(
+						'title' => __( 'Sticky header', 'astra' ),
+					),
+					'two'   => array(
+						'title' => __( 'Divider element', 'astra' ),
+					),
+					'three' => array(
+						'title' => __( 'Language Switcher element', 'astra' ),
+					),
+					'four'  => array(
+						'title' => __( 'Toggle Button element', 'astra' ),
+					),
+					'five'  => array(
+						'title' => __( 'Clone, Delete element options', 'astra' ),
+					),
+					'six'   => array(
+						'title' => __( 'Increased element count', 'astra' ),
+					),
+					'seven' => array(
+						'title' => __( 'More design options', 'astra' ),
+					),
+				),
+				'section'  => 'section-header-builder-layout',
+				'default'  => '',
+				'priority' => 999,
+				'context'  => array(),
+				'title'    => __( 'Make an instant connection with amazing site headers', 'astra' ),
+				'divider'  => array( 'ast_class' => 'ast-top-section-divider' ),
+			);
+		}
 
 		if ( defined( 'ASTRA_EXT_VER' ) && Astra_Ext_Extension::is_active( 'sticky-header' ) ) {
 			/**

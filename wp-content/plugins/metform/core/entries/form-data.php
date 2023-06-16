@@ -114,10 +114,38 @@ class Form_Data
                         if (isset($value['widgetType']) && $value['widgetType'] == 'mf-simple-repeater') {
                             echo "<td>";
                             $repeater_data = ((array_key_exists($key, $form_data)) ? $form_data[$key] : []);
+                            // counter and variables 
+                            $count_index = 0 ; // number of repeter  input field counter
+                            $previous_level = null;
+
                             foreach ($repeater_data as $k => $v) {
-                                echo "<strong>" . esc_html($k) . ": </strong>";
+
+                                $repeter_level = null; 
+
+                                if((isset($map_data[$key]["mf_input_repeater"][$count_index]["mf_input_repeater_label"]))){
+                                        $repeter_level = $map_data[$key]["mf_input_repeater"][$count_index]["mf_input_repeater_label"]; 
+                                }
+                                if((isset($map_data[$key]["mf_input_repeater"][$count_index-1]["mf_input_repeater_label"]))){
+                                    // store previous level 
+                                    $previous_level = $map_data[$key]["mf_input_repeater"][$count_index-1]["mf_input_repeater_label"];
+                                }
+
+                                if($repeter_level == null && $previous_level != null){
+                                    // repeter level empty then set previous level to repeter level
+                                    $repeter_level = $previous_level;
+                                }
+
+                                echo "<strong>" . esc_html( ($repeter_level != null)? $repeter_level : $k) . ": </strong>";
                                 echo "<span>" . esc_html($v) . "</span>";
                                 echo "<br>";
+                                $count_index ++;
+
+                                if($count_index == count($map_data[$key]["mf_input_repeater"])){ 
+                                    // repeter input field count exceed count_index  repeter has repetition set count_index 0 
+                                    $count_index = 0;
+                                    echo "<div class='simple-repeater-entry-data-divider'></div>";
+                                }
+
                             }
                             echo "</td>";
                         }
@@ -212,10 +240,35 @@ class Form_Data
                         if (isset($value['widgetType']) && $value['widgetType'] == 'mf-simple-repeater') {
                             echo "<td>";
                             $repeater_data = ((array_key_exists($key, $form_data)) ? $form_data[$key] : []);
-                            foreach ($repeater_data as $key => $value) {
-                                echo "<strong>" . esc_html($key) . ": </strong>";
-                                echo "<span>" . esc_html($value) . "</span>";
+                             // counter and variables 
+                            $count_index = 0 ; // number of repeter  input field counter
+                            $previous_level = null;
+                            foreach ($repeater_data as $k => $v) {
+                                $repeter_level = null; 
+
+                                if((isset($map_data[$key]["mf_input_repeater"][$count_index]["mf_input_repeater_label"]))){
+                                        $repeter_level = $map_data[$key]["mf_input_repeater"][$count_index]["mf_input_repeater_label"]; 
+                                }
+                                if((isset($map_data[$key]["mf_input_repeater"][$count_index-1]["mf_input_repeater_label"]))){
+                                    // store previous level 
+                                    $previous_level = $map_data[$key]["mf_input_repeater"][$count_index-1]["mf_input_repeater_label"];
+                                }
+
+                                if($repeter_level == null && $previous_level != null){
+                                    // repeter level empty then set previous level to repeter level
+                                    $repeter_level = $previous_level;
+                                }
+
+                                echo "<strong>" . esc_html( ($repeter_level != null)? $repeter_level : $k) . ": </strong>";
+                                echo "<span>" . esc_html($v) . "</span>";
                                 echo "<br>";
+                                $count_index ++;
+
+                                if($count_index == count($map_data[$key]["mf_input_repeater"])){ 
+                                    // repeter input field count exceed count_index  repeter has repetition set count_index 0 
+                                    $count_index = 0;
+                                    echo "<div class='simple-repeater-entry-data-divider'></div>";
+                                }
                             }
                             echo "</td>";
                         }

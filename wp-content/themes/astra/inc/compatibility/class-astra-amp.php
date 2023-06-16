@@ -70,6 +70,16 @@ if ( ! class_exists( 'Astra_AMP' ) ) :
 			add_filter( 'astra_theme_dynamic_css', array( $this, 'dynamic_css' ) );
 			add_filter( 'astra_toggle_button_markup', array( $this, 'toggle_button_markup' ), 20, 2 );
 			add_filter( 'astra_schema_body', array( $this, 'body_id' ) );
+
+			/**
+			 * Scroll to top Addon.
+			 *
+			 * @since 4.0.0
+			 */
+			if ( true === astra_get_option( 'scroll-to-top-enable' ) ) {
+				remove_action( 'wp_footer', array( Astra_Scroll_To_Top_Loader::get_instance(), 'html_markup_loader' ) );
+				remove_filter( 'astra_dynamic_theme_css', 'astra_scroll_to_top_dynamic_css' );
+			}
 		}
 
 		/**
@@ -792,7 +802,7 @@ if ( ! class_exists( 'Astra_AMP' ) ) :
 						'-ms-flex-pack'           => 'center',
 						'justify-content'         => 'center',
 					),
-					'.ast-amp .ast-mobile-header-stack .main-header-bar-wrap .site-branding' => array(
+					'.ast-amp .ast-mobile-header-stack.header-main-layout-1 .main-header-bar-wrap .site-branding' => array(
 						'-webkit-box-flex' => '1',
 						'-webkit-flex'     => '1 1 auto',
 						'-moz-box-flex'    => '1',
@@ -826,7 +836,7 @@ if ( ! class_exists( 'Astra_AMP' ) ) :
 					),
 				);
 
-				$parse_css .= astra_parse_css( $astra_small_break_point_navigation, astra_get_mobile_breakpoint() );
+				$parse_css .= astra_parse_css( $astra_small_break_point_navigation, '', astra_get_mobile_breakpoint() );
 			}
 
 			$parse_css .= astra_parse_css( $astra_break_point_navigation, '', astra_header_break_point() );

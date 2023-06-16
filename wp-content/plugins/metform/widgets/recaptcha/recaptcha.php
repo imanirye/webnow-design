@@ -171,7 +171,7 @@ Class MetForm_Input_Recaptcha extends Widget_Base{
 				if($mf_recaptcha_type == 'recaptcha-v3'){
 					?>
 					
-					<div id="recaptcha_site_key_v3" class="recaptcha_site_key_v3 <?php echo esc_attr($mf_recaptcha_class_name); ?>">
+					<div id="recaptcha_site_key_v3" data-sitekey="<?php echo esc_attr( $recaptcha_key_v3 ); ?>"  class="recaptcha_site_key_v3 <?php echo esc_attr($mf_recaptcha_class_name); ?>">
 						<input type="hidden" class="g-recaptcha-response-v3" name="g-recaptcha-response-v3" />
 					</div>
 					

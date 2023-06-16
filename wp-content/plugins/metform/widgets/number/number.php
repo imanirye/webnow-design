@@ -159,6 +159,7 @@ Class MetForm_Input_Number extends Widget_Base{
 
 			<input
 				type="number"
+				step="any"
 				class="mf-input <?php echo esc_attr($class); ?>"
 				id="mf-input-mobile-<?php echo esc_attr($this->get_id()); ?>"
 				name="<?php echo esc_attr($mf_input_name); ?>"

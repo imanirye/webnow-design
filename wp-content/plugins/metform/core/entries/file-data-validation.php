@@ -40,7 +40,7 @@ class File_Data_Validation
         $limit_status  = isset($field_setting->mf_input_file_size_status) && $field_setting->mf_input_file_size_status == 'on' ? true : false;
         if ($limit_status) {
             $file_size_limit = isset($field_setting->mf_input_file_size_limit) ? $field_setting->mf_input_file_size_limit : 128;
-            $file_size       = array_sum($file_data['size']) / 1024;
+            $file_size       = is_array($file_data['size']) ? array_sum($file_data['size']) / 1024 : $file_data['size'] / 1024;
             if ($file_size > $file_size_limit) {
                 self::$response[$input_name] = [esc_html__(sprintf("%s size cannot exceed %u kb.", $input_name, $file_size_limit), 'metform')];
             }

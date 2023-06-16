@@ -73,6 +73,23 @@ class Meta_Data
                         ?>
                     </td>
                 </tr>
+                <tr class="mf-data-label">
+                    <td colspan='2'><strong><?php esc_html_e('Entry By', 'metform'); ?></strong></td>
+                </tr>
+                <tr class='mf-data-value'>
+                    <td>
+                        <?php
+                           $logged_user_id = get_post_meta($post->ID, 'metform_entries__user_id', true);
+                           if($logged_user_id){
+                               $author_obj = get_user_by('id', $logged_user_id);
+                               $profile_link = "<a href='". wp_nonce_url(admin_url()."/user-edit.php?user_id={$logged_user_id}")."'> {$author_obj->data->user_login}  </a>"; 
+                              echo wp_kses($profile_link, array('a' => ['href'=>[]]));
+                           }else{
+                               echo esc_html__("Visitor", "metform");
+                           }
+                        ?>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

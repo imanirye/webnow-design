@@ -61,7 +61,7 @@ class Action
     {
 
         $this->fields = $this->get_fields($form_id);
-        if(isset($this->fields['mf-recaptcha']) && !isset($form_data['g-recaptcha-response']))  {
+        if(isset($this->fields['mf-recaptcha']) && !isset($form_data['g-recaptcha-response']) && !isset($form_data['g-recaptcha-response-v3']))  {
             $this->response->status = 0;
             $this->response->error[] = esc_html__('Unauthorized submission.', 'metform');
             return $this->response;
@@ -80,8 +80,6 @@ class Action
         $this->title = get_the_title($this->form_id);
         $this->form_settings = \MetForm\Core\Forms\Action::instance()->get_all_data($form_id);
 
-
-        $this->response->data['redirect_to'] = (!isset($this->form_settings['redirect_to'])) ? '' : $this->form_settings['redirect_to'];
         $this->response->data['hide_form'] = (!isset($this->form_settings['hide_form_after_submission']) ? '' : $this->form_settings['hide_form_after_submission']);
 
         $this->response->data['form_data'] = $form_data;
@@ -289,7 +287,7 @@ class Action
 
         // data submit to zapier action and check
         if (class_exists('\MetForm_Pro\Core\Integrations\Zapier')) {
-            if (isset($this->form_settings['mf_zapier']) && $this->form_settings['mf_zapier'] == '1' && $this->email_name != null && $form_data[$this->email_name] != '') {
+            if (isset($this->form_settings['mf_zapier']) && $this->form_settings['mf_zapier'] == '1') {
 
                 $url = $this->form_settings['mf_zapier_webhook'];
 
@@ -424,6 +422,8 @@ class Action
         $this->store($form_id, $this->form_data);
 
         do_action("metform_after_store_form_data", $form_id, $form_data, $this->form_settings, $attributes);
+
+        $this->response->data['redirect_to'] = (empty($this->form_settings['redirect_to'])) ? '' : add_query_arg('id', $this->entry_id, $this->form_settings['redirect_to']);
 
         // data submit to a rest api check and action
         if (class_exists('\MetForm_Pro\Core\Integrations\Rest_Api') && isset($this->form_settings['mf_rest_api']) && ($this->form_settings['mf_rest_api_url'] != '')) {
@@ -675,8 +675,20 @@ class Action
             $this->response->status = 1;
         }
 
+        // entries of logged in user data  
+        if (is_user_logged_in()) {
+           update_post_meta($this->entry_id, 'metform_entries__user_id', get_current_user_id());
+        }
+
         $this->response->status = 1;
         $this->response->data['store'] = $this->form_data;
+        //## set stransient token for data access checking 
+        set_transient('transient_mf_form_data_entry_id_'.$this->entry_id, $this->entry_id, 15*60);
+        
+        $mf_make_str_for_hashing = $this->entry_id.get_current_user_id();
+        $mf_hashed_str_for_access_check = password_hash($mf_make_str_for_hashing,PASSWORD_DEFAULT);
+        // setup cookie for current submission.
+        setcookie(base64_encode('mf-cookie'), $mf_hashed_str_for_access_check, time()+(60*15),'/');
     }
 
     private function update()
@@ -885,8 +897,9 @@ class Action
 
         for ( $index = 0; $index <  $total_files; $index++ ) {
             if (isset($files['name'][$index]) && $files['name'][$index] != '') {
+                $extension = pathinfo($files['name'][$index],PATHINFO_EXTENSION );
                 $upload           = wp_upload_dir();
-                $upload_file_name = time() . "-" . $files['name'][$index];
+                $upload_file_name = "entry-file-".uniqid()."-".microtime(true)."-.".$extension;
                 $upload_status    = move_uploaded_file($files['tmp_name'][$index], $upload['path'] . "/" . $upload_file_name);
 
                 $upload['name'] = $files['name'][$index];

@@ -161,12 +161,145 @@ Class MetForm_Input_Range extends Widget_Base{
         $this->start_controls_section(
 			'input_section',
 			[
-				'label' => esc_html__( 'Range', 'metform' ),
+				'label' => esc_html__( 'Range Track', 'metform' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+        );
+		
+		$this->add_control(
+			'mf_range_input_track_width',
+			[
+				'label' => esc_html__( 'Width', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
+                    'unit' => '%',
+                    'size' => 100,
+                ],
+				'selectors' => [
+					'{{WRAPPER}} .input-range__track' => 'width: {{SIZE}}{{UNIT}};',
+				]
+			]
+		);
+		$this->add_control(
+			'mf_range_input_track_height',
+			[
+				'label' => esc_html__( 'Height', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
+                    'unit' => 'px',
+                    'size' => 6	,
+                ],
+				'selectors' => [
+					'{{WRAPPER}} .input-range__track' => 'height: {{SIZE}}{{UNIT}};',
+				]
+			]
+		);
+
+        $this->input_controls(['NO_BACKGROUND','NO_BORDER']);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'mf_input_range_background',
+				'label' => esc_html__( 'Input Track Background', 'metform' ),
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .input-range__track',
+			]
+		);
+
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'mf_range_input_slider_dot',
+			[
+				'label' => esc_html__( 'Range Slider', 'metform' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
         );
 
-        $this->input_controls(['NO_BACKGROUND','NO_BORDER']);
+		$this->add_control(
+			'mf_range_input_slider_width',
+			[
+				'name' => 'mf_input_range_slider_widthh',
+				'label' => esc_html__( 'Width', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
+                    'unit' => 'px',
+                    'size' => 16	,
+                ],
+				'selectors' => [
+					'{{WRAPPER}} .input-range__slider' => 'width: {{SIZE}}{{UNIT}};',
+				]
+			]
+		);
+		
+		
+		$this->add_control(
+			'mf_range_input_slider_height',
+			[
+				'name' => 'mf_input_range_slider_heightt',
+				'label' => esc_html__( 'Height', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
+                    'unit' => 'px',
+                    'size' => 16	,
+                ],
+				'selectors' => [
+					'{{WRAPPER}} .input-range__slider' => 'height: {{SIZE}}{{UNIT}};',
+				]
+			]
+		);
+		$this->add_control(
+			'mf_range_input_slider_top',
+			[
+				'name' => 'mf_input_range_slider_top',
+				'label' => esc_html__( 'Top', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%','px', 'em', 'rem', 'custom' ],
+				'default' => [
+                    'unit' => '%',
+                    'size' => 50	,
+                ],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} .input-range__slider-container' => 'top: {{SIZE}}{{UNIT}};',
+				]
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'mf_input_range_slider_background',
+				'label' => esc_html__( 'Range Slider Background', 'metform' ),
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .mf-input-wrapper .input-range__slider',
+			]
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'mf_input_range_slider_border',
+				'label' => esc_html__( 'Range Slider Border', 'metform' ),
+				'selector' => '{{WRAPPER}} .mf-input-wrapper .input-range__slider',
+			]
+		);
+		$this->add_control(
+            'mf_range_input_slider_border_radius',
+            [
+                'label' => esc_html__( 'Border Radius', 'metform' ),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+                'selectors' => [
+                    '{{WRAPPER}} .mf-input-wrapper .input-range__slider' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
 
 		$this->end_controls_section();
 
@@ -177,6 +310,15 @@ Class MetForm_Input_Range extends Widget_Base{
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
         );
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'mf_input_range_counter_typgraphy',
+				'label' => esc_html__( 'Typography', 'metform' ),
+				'selector' => '{{WRAPPER}} .mf-input-wrapper .input-range__label-container',
+			]
+		);
 
 		$this->add_control(
 			'mf_range_input_counter_width',
@@ -207,7 +349,24 @@ Class MetForm_Input_Range extends Widget_Base{
 				]
 			]
 		);
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'mf_input_range_slider_counter_background',
+				'label' => esc_html__( 'Range Slider Background', 'metform' ),
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .mf-input-wrapper .input-range__label-container, {{WRAPPER}} .mf-input-wrapper .input-range__label-container::before',
+			]
+		);
 
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'mf_input_range_slider_counter_border',
+				'label' => esc_html__( 'Range Slider Border', 'metform' ),
+				'selector' => '{{WRAPPER}} .mf-input-wrapper .input-range__label-container',
+			]
+		);
 
 		$this->add_control(
             'mf_range_input_counter_border_radius',
@@ -220,6 +379,15 @@ Class MetForm_Input_Range extends Widget_Base{
                 ],
             ]
         );
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'mf_range_input_counter_box_shadow',
+				'label' => esc_html__( 'Box Shadow', 'metform' ),
+				'selector' => '{{WRAPPER}} .input-range__label-container',
+			]
+		);
 
 
 		$this->end_controls_section();

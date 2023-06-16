@@ -18,12 +18,12 @@ final class Plugin {
     {
         Autoloader::run();
 	   add_action( 'wp_head', array( $this, 'add_meta_for_search_excluded' ) );
-       add_action( 'init', array ($this, 'permalink_setup'));
+       add_action( 'init', array ($this, 'metform_permalink_setup'));
     }
 
     public function version()
     {
-        return '3.2.4';
+        return '3.3.3';
     }
 
     public function package_type()
@@ -282,6 +282,13 @@ final class Plugin {
 
         add_action('admin_enqueue_scripts', [$this, 'js_css_admin']);
         add_action('wp_enqueue_scripts', [$this, 'js_css_public']);
+
+        $my_theme = wp_get_theme();
+        if(current_user_can('manage_options') && $my_theme->get('Name') == 'Cleano'){
+            add_action( 'admin_enqueue_scripts', [$this, 'cleanoThemeConflict'], 100 );
+        }
+        
+
         add_action('elementor/frontend/before_enqueue_scripts', [$this, 'elementor_js']);
 
         add_action('elementor/editor/before_enqueue_styles', [$this, 'elementor_css']);
@@ -361,11 +368,12 @@ final class Plugin {
         do_action('metform/onload/enqueue_scripts');
     }
 
+   
+
     public function edit_view_scripts()
     {
         wp_enqueue_style('metform-ui', $this->public_url() . 'assets/css/metform-ui.css', false, $this->version());
         wp_enqueue_style('metform-admin-style', $this->public_url() . 'assets/css/admin-style.css', false, null);
-
 
         wp_enqueue_script('metform-ui', $this->public_url() . 'assets/js/ui.min.js', [], $this->version(), true);
         wp_enqueue_script('metform-admin-script', $this->public_url() . 'assets/js/admin-script.js', [], null, true);
@@ -388,8 +396,25 @@ final class Plugin {
         }
     }
 
+
+
+    /**
+     * @function - {cleanoThemeConflict}
+     * @description - this function is used to remove conflict of bootstrap between metform & cleano theme.
+     */
+    function cleanoThemeConflict() {
+
+        $screen = get_current_screen();
+        if(in_array($screen->id, ['edit-metform-form', 'metform_page_mt-form-settings', 'metform-entry', 'metform_page_metform-menu-settings'])){
+            wp_dequeue_script( 'bootstrap' );
+        }
+     }
+
+
     function js_css_admin()
     {
+
+
         wp_enqueue_style( 'mf-wp-dashboard', $this->core_url() . 'admin/css/mf-wp-dashboard.css', [], $this->version() );
 
         $screen = get_current_screen();
@@ -415,6 +440,9 @@ final class Plugin {
 	 *
 	 */
 	public function add_meta_for_search_excluded() {
+       
+
+
 		if ( in_array(get_post_type(), ['metform-form']) ) {
 			echo '<meta name="robots" content="noindex,nofollow" />', "\n";
 		}
@@ -541,43 +569,10 @@ final class Plugin {
         return self::$instance;
     }
 
-    public function permalink_setup(){
-        if(isset($_GET['permalink']) && isset($_GET['_wpnonce']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])))) {
-           
-           return ;
-		}
-        if(get_option('rewrite_rules') =='' && !isset($_GET['permalink'])){    
-            $message = sprintf(esc_html__('Plain permalink is not supported with MetForm. We recommend to use post name as your permalink settings.', 'metform'));
-            \Oxaim\Libs\Notice::instance('metform', 'unsupported-permalink')
-            ->set_type('warning')
-            ->set_message($message)
-            ->set_button([
-                'url'   => wp_nonce_url(self_admin_url('options-permalink.php?permalink=post')),
-                'text'  => esc_html__('Change Permalink','metform'),
-                'class' => 'button-primary',
-            ])
-            ->call();
-            
-        }
-        if(isset($_GET['permalink']) && $_GET['permalink'] == 'post'){
-             global $wp_rewrite; 
-            $wp_rewrite->set_permalink_structure('/%postname%/'); 
-            
-            //Set the option
-            update_option( "rewrite_rules", false ); 
-            
-            //Flush the rules and tell it to write htaccess
-            $wp_rewrite->flush_rules( true );
-
-            add_action('admin_notices', array( $this, 'permalink_structure_update_notice'));
-        } 
+    public function metform_permalink_setup(){
+       
+        Utils\Util::permalink_setup();
     }
 
-    public function permalink_structure_update_notice() {
-        ?>
-        <div class="notice notice-success is-dismissible">
-            <p><b><?php esc_html_e( 'Permalink Structure Updated!', 'metform' ); ?></b></p>
-        </div>
-        <?php
-    } 
+
 }

@@ -12,6 +12,8 @@ class Shortcode
 
 	public function __construct()
 	{
+		
+
 		add_shortcode('metform', [$this, 'render_form']);
 		add_shortcode('mf_thankyou', [$this, 'render_thank_you_page']);
 		add_shortcode('mf_first_name', [$this, 'render_first_name']);
@@ -54,10 +56,19 @@ class Shortcode
 			'lname' => '',
 		), $atts);
 
-		$settings = \MetForm\Core\Admin\Base::instance()->get_settings_option();
-		$page_id = 	 $settings['mf_thank_you_page'];
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+		
 		$postMeta = get_post_meta(
 			$post_id,
 			'metform_entries__form_data',
@@ -80,9 +91,9 @@ class Shortcode
 		$msg = '';
 
 		if ($payment_status == 'paid') {
-			$msg = $first_name . ' Thank you for your payment. <br>' . ' Your transcation ID : ' . $tnx_id;
+			$msg = $first_name . esc_html__(' Thank you for your payment.', 'metform'). '<br>' . esc_html__(' Your transcation ID : ', 'metform' ). $tnx_id;
 		} else {
-			$msg = 'Thank you . Your payment status : ' . $payment_status;
+			$msg = esc_html__('Thank you . Your payment status : ', 'metform') . $payment_status;
 		}
 		
 		return $msg;
@@ -95,17 +106,37 @@ class Shortcode
 			'field' => ''
 		),$atts);
 
-		$settings = \MetForm\Core\Admin\Base::instance()->get_settings_option();
-		$page_id = 	 $settings['mf_thank_you_page'];
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+	
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+
 		$field = get_post_meta(
 			$post_id,
 			'metform_entries__form_data',
 			true
-		)[$a['field']];
+		);
+		
+		if(!is_array($field)){
+			return esc_html__("No entry found.", 'metform')."<br>"; // br added if one page have multiple shortcode which is not available
+		}
+		 
+		if(!key_exists($a['field'], $field)){
+			return  $a['field'] . esc_html__("No entry found.", 'metform').'<br>';
+		}
+		
+		$field = get_post_meta($post_id, 'metform_entries__form_data',true) [$a['field']];
 
-		return $field;
+		return is_array($field) ? map_deep(implode(" , ",$field), 'esc_html') : esc_html($field);
 	}
 
 	public function render_first_name($atts)
@@ -113,12 +144,23 @@ class Shortcode
 		$this->enqueue_form_assets();
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+
 		$first_name = get_post_meta(
 			$post_id,
 			'metform_entries__form_data',
 			true
 		)['mf-listing-fname'];
-		return $first_name;
+		return esc_html($first_name);
 	}
 
 	public function render_last_name($atts)
@@ -126,12 +168,23 @@ class Shortcode
 		$this->enqueue_form_assets();
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+
 		$last_name = get_post_meta(
 			$post_id,
 			'metform_entries__form_data',
 			true
 		)['mf-listing-lname'];
-		return $last_name;
+		return esc_html($last_name);
 	}
 
 	public function render_payment_status($atts)
@@ -139,6 +192,17 @@ class Shortcode
 		$this->enqueue_form_assets();
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+
 		$payment_status = get_post_meta(
 			$post_id,
 			'metform_entries__payment_status',
@@ -152,6 +216,17 @@ class Shortcode
 		$this->enqueue_form_assets();
 		//phpcs:ignore WordPress.Security.NonceVerification -- Nonce can't be added, Its a callback function of 'add_shortcode'
 		$post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
+		// ##check transient id and session hashed token 
+		if(empty($post_id)){
+			return ;
+		}
+		$token_str = $post_id.get_current_user_id();
+		$access_status_check = $this->transient_and_session_checker($token_str, $post_id);
+		if(!$access_status_check){
+			return; // return nothing or below invalid access 
+			// return "invalid access";
+		}
+
 		$tnx_id = get_post_meta(
 			$post_id,
 			'metform_entries__payment_trans',
@@ -159,5 +234,30 @@ class Shortcode
 		);
 
 		return $tnx_id;
+	}
+
+	public function transient_and_session_checker($token_str, $post_id)
+	{
+		$has_transient_mf_entry_id = get_transient( 'transient_mf_form_data_entry_id_'.$post_id );
+		$status = true; 
+		
+		// if transient expire return false 
+		if(empty($has_transient_mf_entry_id)){
+			$status = false;
+		}
+		// if transient mismatche return false
+		if( $has_transient_mf_entry_id != $post_id ){
+			$status = false;
+		}
+		// if  token empty return false
+		if(!isset($_COOKIE['bWYtY29va2ll'])) {
+			$status = false;
+		}
+		// token not matched return false 
+		if((isset($_COOKIE['bWYtY29va2ll']) && !password_verify($token_str, $_COOKIE['bWYtY29va2ll']))) {
+			$status = false;
+		}
+		
+		return $status;
 	}
 }

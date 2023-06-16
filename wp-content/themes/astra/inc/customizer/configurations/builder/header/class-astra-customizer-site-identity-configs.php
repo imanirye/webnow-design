@@ -51,6 +51,21 @@ if ( class_exists( 'Astra_Customizer_Config_Base' ) ) {
 				),
 
 				/**
+				* Link to the astra logo and site title settings.
+				*/
+				array(
+					'name'           => ASTRA_THEME_SETTINGS . '[logo-title-settings-link]',
+					'type'           => 'control',
+					'control'        => 'ast-customizer-link',
+					'section'        => 'astra-site-identity',
+					'priority'       => 100,
+					'link_type'      => 'section',
+					'is_button_link' => true,
+					'linked'         => 'title_tagline',
+					'link_text'      => __( 'Site Title & Logo Settings', 'astra' ),
+				),
+
+				/**
 				 * Option: Header Builder Tabs
 				 */
 				array(
@@ -60,26 +75,6 @@ if ( class_exists( 'Astra_Customizer_Config_Base' ) ) {
 					'control'     => 'ast-builder-header-control',
 					'priority'    => 0,
 					'description' => '',
-				),
-
-				/**
-				 * Option: Display Title
-				 */
-				array(
-					'name'      => ASTRA_THEME_SETTINGS . '[display-site-title]',
-					'type'      => 'control',
-					'control'   => 'ast-toggle-control',
-					'default'   => astra_get_option( 'display-site-title' ),
-					'section'   => 'title_tagline',
-					'title'     => __( 'Display Site Title', 'astra' ),
-					'priority'  => 7,
-					'transport' => 'postMessage',
-					'partial'   => array(
-						'selector'            => '.site-branding',
-						'container_inclusive' => true,
-						'render_callback'     => 'Astra_Builder_Header::site_identity',
-					),
-					'context'   => Astra_Builder_Helper::$general_tab,
 				),
 
 				// Option: Site Title Color.
@@ -110,6 +105,22 @@ if ( class_exists( 'Astra_Customizer_Config_Base' ) ) {
 					'context'   => Astra_Builder_Helper::$design_tab,
 				),
 
+
+				/**
+						 * Option: Divider
+						 */
+				array(
+					'name'     => ASTRA_THEME_SETTINGS . '[' . $_section . '-margin-divider]',
+					'section'  => $_section,
+					'title'    => __( 'Spacing', 'astra' ),
+					'type'     => 'control',
+					'control'  => 'ast-heading',
+					'priority' => 220,
+					'settings' => array(),
+					'context'  => Astra_Builder_Helper::$design_tab,
+					'divider'  => array( 'ast_class' => 'ast-section-spacing' ),
+				),
+
 				/**
 				 * Option: Margin Space
 				 */
@@ -132,6 +143,7 @@ if ( class_exists( 'Astra_Customizer_Config_Base' ) ) {
 						'left'   => __( 'Left', 'astra' ),
 					),
 					'context'           => Astra_Builder_Helper::$design_tab,
+					'divider'           => array( 'ast_class' => 'ast-section-spacing' ),
 				),
 
 			);

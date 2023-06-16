@@ -33,6 +33,7 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 		public static function fetch_svg_icon( $icon = '', $base = true ) {
 			$output = '<span class="ahfb-svg-iconset ast-inline-flex' . ( $base ? ' svg-baseline' : '' ) . '">';
 
+			/** @psalm-suppress DocblockTypeContradiction */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
 			if ( ! self::$ast_svgs ) {
 				ob_start();
 				include_once ASTRA_THEME_DIR . 'assets/svg/svgs.json'; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
@@ -89,7 +90,7 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 								break;
 						}
 
-						echo '<a href="' . esc_url( $link ) . '"' . esc_attr( $show_label ? ' aria-label=' . $item['label'] . '' : '' ) . ' ' . ( 'phone' === $item['id'] || 'email' === $item['id'] ? '' : 'target="_blank" rel="noopener noreferrer" ' ) . 'style="--color: ' . esc_attr( ! empty( $item['color'] ) ? $item['color'] : '#3a3a3a' ) . '; --background-color: ' . esc_attr( ! empty( $item['background'] ) ? $item['background'] : 'transparent' ) . ';" class="ast-builder-social-element ast-inline-flex ast-' . esc_attr( $item['id'] ) . ' ' . esc_attr( $builder_type ) . '-social-item">';
+						echo '<a href="' . esc_url( $link ) . '"' . esc_attr( $item['label'] ? ' aria-label=' . $item['label'] . '' : ' aria-label=' . $item['id'] . '' ) . ' ' . ( 'phone' === $item['id'] || 'email' === $item['id'] ? '' : 'target="_blank" rel="noopener noreferrer" ' ) . 'style="--color: ' . esc_attr( ! empty( $item['color'] ) ? $item['color'] : '#3a3a3a' ) . '; --background-color: ' . esc_attr( ! empty( $item['background'] ) ? $item['background'] : 'transparent' ) . ';" class="ast-builder-social-element ast-inline-flex ast-' . esc_attr( $item['id'] ) . ' ' . esc_attr( $builder_type ) . '-social-item">';
 						echo self::fetch_svg_icon( $item['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 						if ( $show_label ) {
@@ -134,10 +135,12 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 
 		/**
 		 * Prepare Edit icon inside customizer.
+		 *
+		 * @param string $class custom class.
+		 * @since 3.9.4
 		 */
-		public static function render_customizer_edit_button() {
-			?>
-			<div class="customize-partial-edit-shortcut" data-id="ahfb">
+		public static function render_customizer_edit_button( $class = '' ) { ?>
+			<div class="customize-partial-edit-shortcut <?php echo esc_attr( $class ); ?>" data-id="ahfb">
 				<button aria-label="<?php esc_attr_e( 'Click to edit this element.', 'astra' ); ?>"
 						title="<?php esc_attr_e( 'Click to edit this element.', 'astra' ); ?>"
 						class="customize-partial-edit-shortcut-button item-customizer-focus">
@@ -181,6 +184,21 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 					<?php echo self::fetch_svg_icon( 'edit' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</button>
 			</div>
+			<?php
+		}
+
+		/**
+		 * Prepare Edit navigatory trigger for Banner Section in customizer.
+		 *
+		 * @since 3.9.0
+		 */
+		public static function render_banner_customizer_edit_button() {
+			?>
+				<div class="customize-partial-edit-shortcut banner-editor-shortcut" data-id="ahfb">
+					<button aria-label="<?php esc_attr_e( 'Click to edit this element.', 'astra' ); ?>"	title="<?php esc_attr_e( 'Click to edit this Row.', 'astra' ); ?>" class="item-customizer-focus">
+						<?php echo self::fetch_svg_icon( 'edit' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</button>
+				</div>
 			<?php
 		}
 
@@ -243,8 +261,10 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 
 		/**
 		 * Site Identity.
+		 *
+		 * @param  string $device   Device name.
 		 */
-		public static function render_site_identity() {
+		public static function render_site_identity( $device ) {
 			?>
 				<?php
 				if ( is_customize_preview() ) {
@@ -261,7 +281,7 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 					);
 				?>
 				>
-					<?php astra_logo(); ?>
+					<?php astra_logo( $device ); ?>
 				</div>
 			<!-- .site-branding -->
 			<?php
@@ -273,18 +293,25 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 		 * @since 3.1.0
 		 */
 		public static function render_mobile_cart_flyout_markup() {
+			$flyout_cart_width              = astra_get_option( 'woo-slide-in-cart-width' );
+			$flyout_cart_width_desktop      = ( isset( $flyout_cart_width['desktop'] ) ) ? $flyout_cart_width['desktop'] : '';
+			$flyout_cart_width_desktop_unit = ( isset( $flyout_cart_width['desktop-unit'] ) ) ? $flyout_cart_width['desktop-unit'] : '';
+			$flyout_cart_unit_breakpoint    = 'px' === $flyout_cart_width_desktop_unit ? 500 : 50;
+			$is_width_long                  = $flyout_cart_width_desktop && $flyout_cart_width_desktop > $flyout_cart_unit_breakpoint ? 'ast-large-view' : '';
 			?>
 			<div class="astra-mobile-cart-overlay"></div>
-			<div id="astra-mobile-cart-drawer" class="astra-cart-drawer open-right">
+			<div id="astra-mobile-cart-drawer" class="astra-cart-drawer">
 				<div class="astra-cart-drawer-header">
-					<button type="button" class="astra-cart-drawer-close">
+					<button type="button" class="astra-cart-drawer-close" aria-label="<?php echo esc_attr__( 'Close Cart Drawer', 'astra' ); ?>">
 							<?php echo self::fetch_svg_icon( 'close' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</button>
 					<div class="astra-cart-drawer-title">
-					Shopping Cart
+					<?php
+						echo apply_filters( 'astra_header_cart_flyout_shopping_cart_text', __( 'Shopping Cart', 'astra' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					?>
 					</div>
 				</div>
-				<div class="astra-cart-drawer-content">
+				<div class="astra-cart-drawer-content <?php echo esc_attr( $is_width_long ); ?>">
 					<?php
 					if ( class_exists( 'Astra_Woocommerce' ) ) {
 						the_widget( 'WC_Widget_Cart', 'title=' );
@@ -327,11 +354,8 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 					self::render_customizer_edit_button();
 				}
 
-				?>
-
-				<?php if ( $is_logged_in && ( ( ( ( ! $logout_preview ) || ( 'none' === $logged_out_style && $logout_preview ) ) && $is_customizer ) || ( ! $is_customizer ) ) ) { ?>
-
-					<?php
+				/** @psalm-suppress RedundantConditionGivenDocblockType */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+				if ( $is_logged_in && ( ( ( ( ! $logout_preview ) || ( 'none' === $logged_out_style && $logout_preview ) ) && $is_customizer ) || ( ! $is_customizer ) ) ) {
 
 					$account_type = astra_get_option( 'header-account-type' );
 
@@ -372,7 +396,7 @@ if ( ! class_exists( 'Astra_Builder_UI_Controller' ) ) {
 					$link_classes = 'ast-header-account-link ast-header-account-type-' . $login_profile_type . ' ast-account-action-' . $action_type;
 					?>
 					<div class="ast-header-account-inner-wrap">
-						<a class="<?php echo esc_attr( $link_classes ); ?>" aria-label="<?php esc_attr_e( 'Account icon link', 'astra' ); ?>" <?php echo esc_attr( $link_href . ' ' . $new_tab . ' ' . $link_rel ); ?> >
+						<a class="<?php echo esc_attr( $link_classes ); ?>" role="link" aria-label="<?php esc_attr_e( 'Account icon link', 'astra' ); ?>" <?php echo esc_attr( $link_href . ' ' . $new_tab . ' ' . $link_rel ); ?> >
 
 							<?php
 							if ( 'avatar' === $login_profile_type ) {

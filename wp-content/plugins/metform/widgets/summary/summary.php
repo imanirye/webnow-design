@@ -42,63 +42,19 @@ Class MetForm_Input_Summary extends Widget_Base{
 
         $this->end_controls_section();
 
-        $this->start_controls_section(
-			'settings_section',
-			[
-				'label' => esc_html__( 'Settings', 'metform' ),
-				'tab' => Controls_Manager::TAB_CONTENT,
-			]
-		);
-
-		$this->input_setting_controls();
-
-		$this->add_control(
-			'mf_input_validation_type',
-			[
-				'label' => __( 'Validation Type', 'metform' ),
-				'type' => \Elementor\Controls_Manager::HIDDEN,
-				'default' => 'none',
-			]
-		);
-
-		$this->end_controls_section();
 		
         $this->start_controls_section(
 			'label_section',
 			[
 				'label' => esc_html__( 'Label', 'metform' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'mf_input_label_status',
-							'operator' => '===',
-							'value' => 'yes',
-						],
-						[
-							'name' => 'mf_input_required',
-							'operator' => '===',
-							'value' => 'yes',
-						],
-					],
-                ],
+				'condition' =>[
+					'mf_input_label_status' => 'yes'
+				]
 			]
         );
 
-		$this->input_label_controls();
-
-        $this->end_controls_section();
-
-        $this->start_controls_section(
-			'input_section',
-			[
-				'label' => esc_html__( 'Input', 'metform' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-        );
-
-        //$this->input_controls();
+		$this->summary_input_label_controls();
 
         $this->end_controls_section();
 		
@@ -132,9 +88,8 @@ Class MetForm_Input_Summary extends Widget_Base{
 
 		<div class="mf-input-wrapper">
 			<?php if ( 'yes' == $mf_input_label_status ): ?>
-				<label class="mf-input-label" for="mf-input-text-<?php echo esc_attr( $this->get_id() ); ?>">
+				<label class="mf-input-label mf-summary-wrapper-label" for="mf-input-text-<?php echo esc_attr( $this->get_id() ); ?>">
 					<?php echo esc_html(\MetForm\Utils\Util::react_entity_support($mf_input_label, $render_on_editor )); ?>
-					<span class="mf-input-required-indicator"><?php echo esc_html( ($mf_input_required === 'yes') ? '*' : '' );?></span>
 				</label>
 			<?php endif; ?>
 			

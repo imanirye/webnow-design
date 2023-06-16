@@ -544,4 +544,44 @@ class Util{
 		);
 		return esc_url_raw( $url );
 	}
+
+	public static function permalink_setup(){
+        if( current_user_can('manage_options') ) {
+            if(isset($_GET['permalink']) && $_GET['permalink'] == 'post' && isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])))){
+				self::change_permalink();
+			}
+            if(get_option('rewrite_rules') =='' && !isset($_GET['permalink'])){    
+                $message = sprintf(esc_html__('Plain permalink is not supported with MetForm. We recommend to use post name as your permalink settings.', 'metform'));
+                \Oxaim\Libs\Notice::instance('metform', 'unsupported-permalink')
+                ->set_type('warning')
+                ->set_message($message)
+                ->set_button([
+                    'url'   => wp_nonce_url(self_admin_url('options-permalink.php?permalink=post')),
+                    'text'  => esc_html__('Change Permalink','metform'),
+                    'class' => 'button-primary',
+                ])
+                ->call();
+            }
+        }
+    }
+
+	public static function change_permalink(){
+			global $wp_rewrite; 
+			$wp_rewrite->set_permalink_structure('/%postname%/'); 
+			
+			//Set the option
+			update_option( "rewrite_rules", false ); 
+			
+			//Flush the rules and tell it to write htaccess
+			$wp_rewrite->flush_rules( true );
+
+			add_action('admin_notices', array( self::class, 'permalink_structure_update_notice'));
+	}
+	public static function permalink_structure_update_notice() {
+        ?>
+        <div class="notice notice-success is-dismissible">
+            <p><b><?php esc_html_e( 'Permalink Structure Updated!', 'metform' ); ?></b></p>
+        </div>
+        <?php
+    } 
 }

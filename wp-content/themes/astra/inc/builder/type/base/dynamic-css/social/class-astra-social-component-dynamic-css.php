@@ -45,10 +45,10 @@ class Astra_Social_Component_Dynamic_CSS {
 			$selector        = '.ast-' . $builder_type . '-social-' . $index . '-wrap';
 			$_section        = ( 'header' === $builder_type ) ? 'section-hb-social-icons-' . $index : 'section-fb-social-icons-' . $index;
 
-			$icon_spacing    = astra_get_option( $builder_type . '-social-' . $index . '-space' );
-			$icon_bg_spacing = astra_get_option( $builder_type . '-social-' . $index . '-bg-space' );
-			$icon_size       = astra_get_option( $builder_type . '-social-' . $index . '-size' );
-			$icon_radius     = astra_get_option( $builder_type . '-social-' . $index . '-radius' );
+			$icon_spacing       = astra_get_option( $builder_type . '-social-' . $index . '-space' );
+			$icon_bg_spacing    = astra_get_option( $builder_type . '-social-' . $index . '-bg-space' );
+			$icon_size          = astra_get_option( $builder_type . '-social-' . $index . '-size' );
+			$icon_radius_fields = astra_get_option( $builder_type . '-social-' . $index . '-radius-fields' );
 
 			$icon_spacing_desktop = ( isset( $icon_spacing['desktop'] ) && '' !== $icon_spacing['desktop'] ) ? (int) $icon_spacing['desktop'] / 2 : '';
 			$icon_spacing_tablet  = ( isset( $icon_spacing['tablet'] ) && '' !== $icon_spacing['tablet'] ) ? (int) $icon_spacing['tablet'] / 2 : '';
@@ -58,7 +58,6 @@ class Astra_Social_Component_Dynamic_CSS {
 			$icon_size_tablet  = ( isset( $icon_size['tablet'] ) && '' !== $icon_size['tablet'] ) ? (int) $icon_size['tablet'] : '';
 			$icon_size_mobile  = ( isset( $icon_size['mobile'] ) && '' !== $icon_size['mobile'] ) ? (int) $icon_size['mobile'] : '';
 
-			$icon_radius     = ( isset( $icon_radius ) && '' !== $icon_radius ) ? (int) $icon_radius : '';
 			$icon_bg_spacing = ( isset( $icon_bg_spacing ) && '' !== $icon_bg_spacing ) ? (int) $icon_bg_spacing : '';
 
 			// Normal Responsive Colors.
@@ -102,14 +101,17 @@ class Astra_Social_Component_Dynamic_CSS {
 
 				$selector . ' .ast-builder-social-element' => array(
 					// Icon Spacing.
-					'margin-left'   => astra_get_css_value( $icon_spacing_desktop, 'px' ),
-					'margin-right'  => astra_get_css_value( $icon_spacing_desktop, 'px' ),
+					'margin-left'                => astra_get_css_value( $icon_spacing_desktop, 'px' ),
+					'margin-right'               => astra_get_css_value( $icon_spacing_desktop, 'px' ),
 
 					// Icon Background Space.
-					'padding'       => astra_get_css_value( $icon_bg_spacing, 'px' ),
+					'padding'                    => astra_get_css_value( $icon_bg_spacing, 'px' ),
 
 					// Icon Radius.
-					'border-radius' => astra_get_css_value( $icon_radius, 'px' ),
+					'border-top-left-radius'     => astra_responsive_spacing( $icon_radius_fields, 'top', 'desktop' ),
+					'border-top-right-radius'    => astra_responsive_spacing( $icon_radius_fields, 'right', 'desktop' ),
+					'border-bottom-right-radius' => astra_responsive_spacing( $icon_radius_fields, 'bottom', 'desktop' ),
+					'border-bottom-left-radius'  => astra_responsive_spacing( $icon_radius_fields, 'left', 'desktop' ),
 				),
 				$selector . ' .ast-builder-social-element svg' => array(
 
@@ -169,8 +171,14 @@ class Astra_Social_Component_Dynamic_CSS {
 				),
 				$selector . ' .ast-builder-social-element' => array(
 					// Icon Spacing.
-					'margin-left'  => astra_get_css_value( $icon_spacing_tablet, 'px' ),
-					'margin-right' => astra_get_css_value( $icon_spacing_tablet, 'px' ),
+					'margin-left'                => astra_get_css_value( $icon_spacing_tablet, 'px' ),
+					'margin-right'               => astra_get_css_value( $icon_spacing_tablet, 'px' ),
+
+					// Border Radius.
+					'border-top-left-radius'     => astra_responsive_spacing( $icon_radius_fields, 'top', 'tablet' ),
+					'border-top-right-radius'    => astra_responsive_spacing( $icon_radius_fields, 'right', 'tablet' ),
+					'border-bottom-right-radius' => astra_responsive_spacing( $icon_radius_fields, 'bottom', 'tablet' ),
+					'border-bottom-left-radius'  => astra_responsive_spacing( $icon_radius_fields, 'left', 'tablet' ),
 				),
 				$selector                                  => array(
 					// Margin CSS.
@@ -219,8 +227,14 @@ class Astra_Social_Component_Dynamic_CSS {
 				),
 				$selector . ' .ast-builder-social-element' => array(
 					// Icon Spacing.
-					'margin-left'  => astra_get_css_value( $icon_spacing_mobile, 'px' ),
-					'margin-right' => astra_get_css_value( $icon_spacing_mobile, 'px' ),
+					'margin-left'                => astra_get_css_value( $icon_spacing_mobile, 'px' ),
+					'margin-right'               => astra_get_css_value( $icon_spacing_mobile, 'px' ),
+
+					// Border Radius.
+					'border-top-left-radius'     => astra_responsive_spacing( $icon_radius_fields, 'top', 'mobile' ),
+					'border-top-right-radius'    => astra_responsive_spacing( $icon_radius_fields, 'right', 'mobile' ),
+					'border-bottom-right-radius' => astra_responsive_spacing( $icon_radius_fields, 'bottom', 'mobile' ),
+					'border-bottom-left-radius'  => astra_responsive_spacing( $icon_radius_fields, 'left', 'mobile' ),
 				),
 				$selector                                  => array(
 					// Margin CSS.
@@ -291,7 +305,7 @@ class Astra_Social_Component_Dynamic_CSS {
 			$generated_css .= $css_output;
 		}
 		if ( $social_css_flag ) {
-			$generated_css .= self::get_social_static_css();
+			return self::get_social_static_css() . $generated_css;
 		}
 
 		return $generated_css;
@@ -303,8 +317,16 @@ class Astra_Social_Component_Dynamic_CSS {
 	 * @since 3.0.0
 	 */
 	public static function get_social_static_css() {
-		return '
-		/* Social Icons Official CSS */
+		$social_static_css = '
+		.ast-builder-social-element:hover {
+			color: #0274be;
+		}
+		.ast-social-stack-desktop .ast-builder-social-element,
+		.ast-social-stack-tablet .ast-builder-social-element,
+		.ast-social-stack-mobile .ast-builder-social-element {
+		  margin-top: 6px;
+		  margin-bottom: 6px;
+		}
 		.ast-social-color-type-official .ast-builder-social-element, .ast-social-color-type-official .social-item-label {
 			color: var(--color);
 			background-color: var(--background-color);
@@ -312,7 +334,97 @@ class Astra_Social_Component_Dynamic_CSS {
 		.header-social-inner-wrap.ast-social-color-type-official .ast-builder-social-element svg,
 		.footer-social-inner-wrap.ast-social-color-type-official .ast-builder-social-element svg {
 		  fill: currentColor;
+		}
+		.social-show-label-true .ast-builder-social-element {
+			width: auto;
+			padding: 0 0.4em;
+		}
+		[data-section^="section-fb-social-icons-"] .footer-social-inner-wrap {
+			text-align: center;
+		}
+		.ast-footer-social-wrap {
+			width: 100%;
 		}';
+
+		if ( is_rtl() ) {
+			$social_static_css .= '.ast-footer-social-wrap .ast-builder-social-element:first-child {
+				margin-right: 0;
+			}
+			.ast-footer-social-wrap .ast-builder-social-element:last-child {
+				margin-left: 0;
+			}
+			.ast-header-social-wrap .ast-builder-social-element:first-child {
+				margin-right: 0;
+			}
+			.ast-header-social-wrap .ast-builder-social-element:last-child {
+				margin-left: 0;
+			}
+			.ast-builder-social-element {
+				line-height: 1;
+				color: #3a3a3a;
+				background: transparent;
+				vertical-align: middle;
+				transition: all 0.01s;
+				margin-right: 6px;
+				margin-left: 6px;
+				justify-content: center;
+				align-items: center;
+			}
+			.ast-builder-social-element {
+				line-height: 1;
+				color: #3a3a3a;
+				background: transparent;
+				vertical-align: middle;
+				transition: all 0.01s;
+				margin-right: 6px;
+				margin-left: 6px;
+				justify-content: center;
+				align-items: center;
+			}
+			.ast-builder-social-element .social-item-label {
+				padding-right: 6px;
+			}';
+		} else {
+			$social_static_css .= '.ast-footer-social-wrap .ast-builder-social-element:first-child {
+				margin-left: 0;
+			}
+			.ast-footer-social-wrap .ast-builder-social-element:last-child {
+				margin-right: 0;
+			}
+			.ast-header-social-wrap .ast-builder-social-element:first-child {
+				margin-left: 0;
+			}
+			.ast-header-social-wrap .ast-builder-social-element:last-child {
+				margin-right: 0;
+			}
+			.ast-builder-social-element {
+				line-height: 1;
+				color: #3a3a3a;
+				background: transparent;
+				vertical-align: middle;
+				transition: all 0.01s;
+				margin-left: 6px;
+				margin-right: 6px;
+				justify-content: center;
+				align-items: center;
+			}
+			.ast-builder-social-element {
+				line-height: 1;
+				color: #3a3a3a;
+				background: transparent;
+				vertical-align: middle;
+				transition: all 0.01s;
+				margin-left: 6px;
+				margin-right: 6px;
+				justify-content: center;
+				align-items: center;
+			}
+			.ast-builder-social-element .social-item-label {
+				padding-left: 6px;
+			}';
+		}
+
+		return Astra_Enqueue_Scripts::trim_css( $social_static_css );
 	}
 }
 

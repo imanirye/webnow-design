@@ -109,7 +109,7 @@ class Api extends \MetForm\Base\Api
         /**
          * Auth / Login settings save
          */
-        if (class_exists('\MetForm_Pro\Core\Integrations\Auth\Login\Login')) {
+        if (class_exists('\MetForm_Pro\Core\Integrations\Auth\Login\Loader')) {
 
 
             if (isset($form_setting['mf_auth_login_user_name'])) {
@@ -246,7 +246,7 @@ class Api extends \MetForm\Base\Api
 		if(!current_user_can('manage_options')) {
 			return;
 		}
-
+        
         $form_id = $this->request['id'];
         $key = 'hubsopt_forms_' . $form_id . '_';
         $data = \MetForm\Core\Forms\Action::instance()->get_all_data($form_id);
@@ -256,6 +256,7 @@ class Api extends \MetForm\Base\Api
         $token = $data['mf_hubsopt_token'];
 
         if(isset($data['mf_hubsopt_token_type']) && !empty($data['mf_hubsopt_token_type'])){
+
             // Refresh token if needed
             \MetForm\Core\Integrations\Crm\Hubspot\Hubspot::refresh_token();
             // API Endpoint

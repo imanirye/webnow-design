@@ -252,6 +252,23 @@ Class MetForm_Input_Radio extends Widget_Base{
                 'tab' => Controls_Manager::TAB_STYLE,
             ]
         );
+
+		$this->add_responsive_control(
+			'mf_radio_btn_style',
+			[
+				'label' => esc_html_x( 'Input Type', 'Radio Control', 'metform' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'"\f192"' => esc_html_x( 'Radio', 'Radio Control', 'metform' ),
+					'"\f058"' => esc_html_x( 'Checked', 'Radio Control', 'metform' ),
+				],
+				'default'	=> '"\f192"',
+				'selectors' => [
+					'{{WRAPPER}} .mf-radio-option input[type="radio"]:checked + span:before' => 'content: {{VALUE}}'
+				],
+				
+			]
+		);
         
         $this->add_responsive_control(
 			'mf_input_option_padding',

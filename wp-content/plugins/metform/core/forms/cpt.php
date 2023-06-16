@@ -295,17 +295,23 @@ class Cpt extends \MetForm\Base\Cpt
             ],
 
             // Hubsopt
-
             'mf_hubspot' => [
                 'name' => 'mf_hubspot',
             ],
-
             'mf_hubspot_forms' => [
                 'name' => 'mf_hubspot_forms',
             ],
-
             'mf_hubsopt_token' => [
                 'name' => 'mf_hubsopt_token',
+            ],
+            'mf_hubsopt_refresh_token' => [
+                'name' => 'mf_hubsopt_refresh_token',
+            ],
+            'mf_hubsopt_token_type' => [
+                'name' => 'mf_hubsopt_token_type',
+            ],
+            'mf_hubsopt_expires_in' => [
+                'name' => 'mf_hubsopt_expires_in',
             ],
             'mf_hubspot_form_guid' => [
                 'name' => 'mf_hubspot_form_guid'

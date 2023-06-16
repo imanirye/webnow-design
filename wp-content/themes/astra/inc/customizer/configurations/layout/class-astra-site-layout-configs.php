@@ -54,7 +54,21 @@ if ( ! class_exists( 'Astra_Site_Layout_Configs' ) ) {
 						'step' => 1,
 						'max'  => 1920,
 					),
-					'divider'     => array( 'ast_class' => 'ast-bottom-divider' ),
+				),
+				array(
+					'name'        => ASTRA_THEME_SETTINGS . '[narrow-container-max-width]',
+					'type'        => 'control',
+					'control'     => 'ast-slider',
+					'default'     => astra_get_option( 'narrow-container-max-width' ),
+					'section'     => 'section-container-layout',
+					'priority'    => 10,
+					'title'       => __( 'Narrow Container Width', 'astra' ),
+					'suffix'      => 'px',
+					'input_attrs' => array(
+						'min'  => 400,
+						'step' => 1,
+						'max'  => 1000,
+					),
 				),
 			);
 

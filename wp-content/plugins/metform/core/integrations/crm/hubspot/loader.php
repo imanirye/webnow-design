@@ -84,7 +84,6 @@ class Integration
         $current_page = isset($_GET["page"]) ? admin_url("admin.php?page=" . sanitize_text_field(wp_unslash($_GET["page"]))) : '';
         $settings_option = \MetForm\Core\Admin\Base::instance()->get_settings_option();
 
-
         if(isset($_GET['redirect_nonce_url']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['redirect_nonce_url'])))){
             die("You are not allowed to view the page.");
         }
@@ -127,6 +126,30 @@ class Integration
                     'name' => 'mf_hubsopt_token',
                     'description' => '',
                     'placeholder' => esc_html__('Enter Hubsopt token here', 'metform'),
+                ];
+                Render::textbox($data);
+
+                $data = [
+                    'lable' => esc_html__('Refresh Token', 'metform'),
+                    'name' => 'mf_hubsopt_refresh_token',
+                    'description' => '',
+                    'placeholder' => esc_html__('Enter Hubsopt refresh token here', 'metform'),
+                ];
+                Render::textbox($data);
+
+                $data = [
+                    'lable' => esc_html__('Token Tyoe', 'metform'),
+                    'name' => 'mf_hubsopt_token_type',
+                    'description' => '',
+                    'placeholder' => esc_html__('Enter Hubsopt token type here', 'metform'),
+                ];
+                Render::textbox($data);
+
+                $data = [
+                    'lable' => esc_html__('Token Expires In', 'metform'),
+                    'name' => 'mf_hubsopt_expires_in',
+                    'description' => '',
+                    'placeholder' => esc_html__('Enter Hubsopt token expires in here', 'metform'),
                 ];
                 Render::textbox($data);
                 ?>

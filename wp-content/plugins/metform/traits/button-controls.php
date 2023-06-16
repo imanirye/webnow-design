@@ -371,7 +371,15 @@ trait Button_Controls{
     }
 
     protected function button_icon_control(){
-		
+		$this->start_controls_tabs( 'mf_icon_btn_tabs_style' );
+
+		$this->start_controls_tab(
+			'mf_icon_btn_tab_normal',
+			[
+				'label' =>esc_html__( 'Normal', 'metform' ),
+			]
+		);
+
 		$this->add_control(
 			'mf_btn_normal_icon_color',
 			[
@@ -383,11 +391,40 @@ trait Button_Controls{
 				],
 				'default' => '#FFFFFF',
 				'selectors' => [
-					'{{WRAPPER}} .mf-btn-wraper i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .mf-btn-wraper svg' => 'fill: {{VALUE}}',
+					'{{WRAPPER}} .mf-btn-wraper i' => 'color: {{VALUE}}'
 				],
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'mf_icon_btn_tab_button_hover',
+			[
+				'label' =>esc_html__( 'Hover', 'metform' ),
+			]
+		);
+
+		$this->add_control(
+			'mf_btn_hover_icon_color',
+			[
+				'label' => esc_html__( 'Icon Color', 'metform' ),
+				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => \Elementor\Core\Schemes\Color::get_type(),
+					'value' => \Elementor\Core\Schemes\Color::COLOR_1,
+				],
+				'default' => '#FFFFFF',
+				'selectors' => [
+					'{{WRAPPER}} .metform-btn:hover svg' => 'fill: {{VALUE}}',
+					'{{WRAPPER}} .metform-btn:hover i' => 'color: {{VALUE}}'
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+		$this->end_controls_tabs();
         $this->add_responsive_control(
 			'mf_btn_normal_icon_font_size',
 			array(
@@ -401,65 +438,36 @@ trait Button_Controls{
 						'min' => 1,
 						'max' => 100,
 					),
-				),
+				), 
+				'default' => [
+                    'unit' => 'px',
+                    'size' => 15,
+                ],
+
 				'selectors'  => array(
-					'{{WRAPPER}} .mf-btn-wraper i' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .mf-btn-wraper svg ' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .mf-btn-wraper i ' => 'font-size: {{SIZE}}{{UNIT}}'
 				),
 			)
         );
         
 		$this->add_responsive_control(
-			'mf_btn_normal_icon_padding_left',
+			'mf_btn_normal_icon_padding',
 			[
-				'label' => esc_html__( 'Padding Right', 'metform' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-						'step' => 1,
-					],
-				],
+				'label' => esc_html__( 'Padding', 'metform' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em' ],
 				'default' => [
 					'unit' => 'px',
 					'size' => 5,
 				],
 				'selectors' => [
-					'{{WRAPPER}} .metform-btn > i' => 'padding-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .metform-btn > svg' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .metform-btn > i' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-				'condition' => [
-					'mf_btn_icon_align' => 'left'
-				]
 			]
         );
         
-		$this->add_responsive_control(
-			'mf_btn_normal_icon_padding_right',
-			[
-				'label' => esc_html__( 'Padding Left', 'metform' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 100,
-						'step' =>1,
-					],
-				],
-				'default' => [
-					'unit' => 'px',
-					'size' => 5,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .metform-btn > i' => 'padding-left: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'mf_btn_icon_align' => 'right'
-				]
-			]
-		);
-
         $this->add_responsive_control(
             'mf_btn_normal_icon_vertical_align',
             array(
@@ -483,7 +491,8 @@ trait Button_Controls{
                     ),
                 ),
                 'selectors'  => array(
-                    '{{WRAPPER}} .metform-btn i' => ' -webkit-transform: translateY({{SIZE}}{{UNIT}}); -ms-transform: translateY({{SIZE}}{{UNIT}}); transform: translateY({{SIZE}}{{UNIT}})',
+                    '{{WRAPPER}} .metform-btn > svg' => ' -webkit-transform: translateY({{SIZE}}{{UNIT}}); -ms-transform: translateY({{SIZE}}{{UNIT}}); transform: translateY({{SIZE}}{{UNIT}})',
+					'{{WRAPPER}} .metform-btn > i' => ' -webkit-transform: translateY({{SIZE}}{{UNIT}}); -ms-transform: translateY({{SIZE}}{{UNIT}}); transform: translateY({{SIZE}}{{UNIT}})',
                 ),
             )
         );

@@ -2,9 +2,9 @@
 Contributors: xpeedstudio, ataurr, emranio
 Tags: Form builder, contact form, Elementor contact form, contact form builder, elementor forms builder, drag and drop builder
 Requires at least: 4.8
-Tested up to: 6.1
-Stable tag: 3.2.4
-Requires PHP: 7.0
+Tested up to: 6.2
+Stable tag: 3.3.3
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -299,6 +299,42 @@ Connect with Gmail, Slack, Mailchimp, and many more. It helps to post Trello car
 **Migrations are coming soon in these forms. Contact Form 7, Caldera Forms, Ninja Forms, Gravity Forms, fluent forms, wp forms, Forminator & Formidable Form Builder, Everest Forms**
 
 == Changelog == 
+
+Version: 3.3.3 // 2023-06-11
+Added: Entry by meta data in the entry submission.
+Added: New controls for range input widget.
+Added: New control to change radio widget style.
+Fixed: Permalink structure update user permission.
+Fixed: Session conflict in the site health.
+Fixed: Summary widget style issue.
+Fixed: Float number is not working on number widget.
+Fixed: Page reloads even when there is no redirect URL after form submission.
+Fixed: Conditional logic for date field.
+Fixed: Localstoreage data not saving for simple repeater field.
+Fixed: Mobile widget issue.
+Improved: Submit button icon control issue.
+Improved: Added compatibility for updated Elementor with create form popup.
+Improved: Compatibility with Cleano theme.
+Improved: Login form layout issue fixed.
+
+Version 3.3.2 // 2023-05-08
+Added: Submission ID with the thank you direction URL.
+Improved: Security, nonce and authorization checking.
+
+Version 3.3.1 // 2023-05-03
+Fixed: Form editor popup conflict with Elementor version update.
+Improved: Security, nonce and authorization checking.
+
+Version 3.3.0 // 2023-04-10
+Added: Compatibility with Google Place autocomplete plugin with MetForm.
+Fixed: Multi step form issue for any type of changes in Elementor.
+Fixed: Recaptcha V3 form submit issue.
+Fixed: File upload fatal error.
+Fixed: Zapier integration email field issue.
+Fixed: HubSpot list fetching and token saving issue.
+Fixed: Filtering entries in dashboard.
+Fixed: Simple repeater data in email.
+Improved: Simple repeater field name with static name.
 
 Version 3.2.4 // 2023-03-12
 Fixed: Something went wrong message when upload file field is empty.

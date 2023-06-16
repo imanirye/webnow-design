@@ -547,7 +547,7 @@ Class MetForm_Input_Date extends Widget_Base{
 												(($mf_input_date_select == 'yes') ? 'd' : 'd-m-Y')))))));
 
 		if( esc_attr($mf_input_date_with_time) && !empty($mf_input_date_with_time) ){
-			$date_format .= " H:i";
+			$date_format .= " h:i K";
 		}
 		$class = (isset($settings['mf_conditional_logic_form_list']) ? 'mf-conditional-input' : '');
 		

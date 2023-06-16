@@ -129,11 +129,11 @@ Class Action {
 		update_post_meta($this->form_id, '_wp_page_template', 'elementor_canvas');
 
 		$this->response['saved'] = true;
-		$this->response['status'] = esc_html('Form settings updated', 'metform');
+		$this->response['status'] = esc_html__('Form settings updated', 'metform');
 
 		if((!array_key_exists('store_entries', $this->form_setting)) && (!array_key_exists('enable_user_notification', $this->form_setting)) && (!array_key_exists('enable_admin_notification', $this->form_setting)) && (!array_key_exists('mf_mail_chimp', $this->form_setting)) && (!array_key_exists('mf_zapier', $this->form_setting)) && (!array_key_exists('mf_rest_api', $this->form_setting)) && (!array_key_exists('mf_slack', $this->form_setting))) {
 			$this->response['saved'] = false;
-			$this->response['status'] = esc_html('You must active at least one field of these fields "store entries/ Confirmation/ Notification/ REST API/ MailChimp/ Slack/ Zapier". ', 'metform');
+			$this->response['status'] = esc_html__('You must active at least one field of these fields "store entries/ Confirmation/ Notification/ REST API/ MailChimp/ Slack/ Zapier". ', 'metform');
 		}
 		if((array_key_exists('mf_paypal', $this->form_setting)) && (!array_key_exists('store_entries', $this->form_setting))) {
 			$this->response['saved'] = false;

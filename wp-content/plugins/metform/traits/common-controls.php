@@ -465,6 +465,99 @@ trait Common_Controls{
 		);
     }
 
+	protected function summary_input_label_controls($param = []){
+		$this->add_control(
+			'mf_input_label_width',
+			[
+				'label' => esc_html__( 'Width', 'metform' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1000,
+						'step' => 5,
+					]
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 20,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .mf-input-label' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .mf-input-wrapper .mf-input:not(.mf-left-parent), {{WRAPPER}} .mf-input-wrapper .multi-option-input-type' => 'display: inline-block; width: calc(100% - {{SIZE}}{{UNIT}} - 7px)',
+					'{{WRAPPER}} .mf-input-wrapper > .iti' => 'width: calc(100% - {{SIZE}}{{UNIT}} - 7px)',
+					'{{WRAPPER}} .mf-input-calculation-total' => 'width: calc(100% - {{SIZE}}{{UNIT}} - 7px); display: inline-block;',
+					'{{WRAPPER}} .range-slider' => 'width: calc(100% - {{SIZE}}{{UNIT}} - 7px)',
+					'{{WRAPPER}} .mf-input-wrapper .flatpickr-wrapper, {{WRAPPER}} .mf-input-wrapper .react-tel-input' => 'display: inline-block; width: calc(100% - {{SIZE}}{{UNIT}} - 7px);',
+					'{{WRAPPER}} .mf-form-wrapper label' => 'margin-right: 4px;',
+				],
+				'condition'    => [
+                    'mf_input_label_display_property' => 'inline-block',
+                ],
+			]
+		);
+
+		$this->add_control(
+			'mf_input_label_color',
+			[
+                'label' => esc_html__( 'Color', 'metform' ),
+				'type' => Controls_Manager::COLOR,
+				'scheme' => [
+					'type' => \Elementor\Core\Schemes\Color::get_type(),
+					'value' => \Elementor\Core\Schemes\Color::COLOR_1,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .mf-input-label' => 'color: {{VALUE}}',
+				],
+				'default' => '#000000',
+				'condition'    => [
+                    'mf_input_label_status' => 'yes',
+                ],
+			]
+		);
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'mf_input_label_typography',
+				'label' => esc_html__( 'Typography', 'metform' ),
+				'scheme' => \Elementor\Core\Schemes\Typography::TYPOGRAPHY_1,
+				'selector' => '{{WRAPPER}} .mf-input-label',
+				'condition'    => [
+                    'mf_input_label_status' => 'yes',
+                ],
+			]
+		);
+		$this->add_responsive_control(
+			'mf_input_label_padding',
+			[
+				'label' => esc_html__( 'Padding', 'metform' ),
+				'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+				'selectors' => [
+					'{{WRAPPER}} .mf-input-label' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition'    => [
+                    'mf_input_label_status' => 'yes',
+                ],
+			]
+		);
+		$this->add_responsive_control(
+			'mf_input_label_margin',
+			[
+				'label' => esc_html__( 'Margin', 'metform' ),
+				'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px', '%', 'em' ],
+				'selectors' => [
+					'{{WRAPPER}} .mf-input-label' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition'    => [
+                    'mf_input_label_status' => 'yes',
+                ],
+			]
+		);
+    }
+
 	protected function input_controls($param = []){
 		$this->add_responsive_control(
 			'mf_input_padding',
@@ -524,8 +617,8 @@ trait Common_Controls{
 	
 						'{{WRAPPER}} .mf_select__single-value' => 'color: {{VALUE}}',
 	
-						'{{WRAPPER}} .mf-input-wrapper .input-range__slider'	=> 'border-color: {{VALUE}}',
-						'{{WRAPPER}} .mf-input-wrapper .input-range__track--active, {{WRAPPER}} .mf-input-wrapper .input-range__label-container, {{WRAPPER}} .mf-input-wrapper .input-range__label-container:before' => 'background-color: {{VALUE}}',
+						'{{WRAPPER}} .mf-input-wrapper'	=> 'border-color: {{VALUE}}',
+						'{{WRAPPER}} .mf-input-wrapper .input-range__track--active' => 'background-color: {{VALUE}}',
 
 						'{{WRAPPER}} .mf-input-wrapper .asRange .asRange-pointer .asRange-tip'	=> 'background-color: {{VALUE}}; border-color: {{VALUE}}',
 						'{{WRAPPER}} .mf-input-file-upload-label, {{WRAPPER}} .mf-input-calculation-total' => 'color: {{VALUE}};',
@@ -589,7 +682,7 @@ trait Common_Controls{
 	
 						'{{WRAPPER}} .mf-file-upload-container:hover .mf-input-file-upload-label svg path' => 'stroke:{{VALUE}}; fill: {{VALUE}}',
 	
-						'{{WRAPPER}} .mf-input-wrapper .input-range__slider:hover' => 'border-color: {{VALUE}}',
+						'{{WRAPPER}} .mf-input-wrapper' => 'border-color: {{VALUE}}',
 
 						'{{WRAPPER}} .mf_multiselect__multi-value:hover .mf_multiselect__multi-value__label, {{WRAPPER}} .mf_multiselect__multi-value:hover .mf_multiselect__multi-value__remove,{{WRAPPER}} .mf_multiselect__menu-notice--no-options:hover' =>  'color: {{VALUE}}',
 					],
@@ -648,7 +741,7 @@ trait Common_Controls{
 						'{{WRAPPER}} .mf-input > .mf_select__control--is-focused .mf_select__single-value' => 'color: {{VALUE}}',
 						'{{WRAPPER}} .mf-file-upload-container:focus .mf-input-file-upload-label svg path'	=> 'stroke: {{VALUE}}; fill: {{VALUE}};',
 	
-						'{{WRAPPER}} .mf-input-wrapper .input-range__slider:focus' => 'border-color: {{VALUE}}',
+						'{{WRAPPER}} .mf-input-wrapper' => 'border-color: {{VALUE}}',
 						'{{WRAPPER}} .mf-input-calculation-total:focus, {{WRAPPER}} .mf_multiselect__option:focus, {{WRAPPER}} .mf_multiselect__multi-value:focus .mf_multiselect__multi-value__label, {{WRAPPER}} .mf_multiselect__multi-value:focus .mf_multiselect__multi-value__remove, {{WRAPPER}} .mf_multiselect__menu-notice--no-options:focus' => 'color: {{VALUE}}'
 					],
 					'default' => '#000000',
@@ -727,6 +820,7 @@ trait Common_Controls{
 					'size' => 0,
 				],
 				'selectors' => [
+					'{{WRAPPER}} .input-range .input-range__track' => 'border-radius: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .mf-input' => 'border-radius: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .mf-file-upload-container .mf-input-file-upload-label, {{WRAPPER}} .mf-input-wrapper .iti--separate-dial-code .iti__selected-flag, {{WRAPPER}} .mf-input-calculation-total'  => 'border-radius: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .mf-input-select > .mf_select__control, {{WRAPPER}} .mf-input-multiselect .mf_multiselect__control, {{WRAPPER}} .mf_multiselect__option, {{WRAPPER}} .mf_multiselect__multi-value__label, {{WRAPPER}} .mf_multiselect__multi-value__remove, {{WRAPPER}} .mf_multiselect__menu-notice--no-options ' => 'border-radius: {{SIZE}}{{UNIT}};',
